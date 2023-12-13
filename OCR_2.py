@@ -6,7 +6,7 @@ import os
 
 # Ruta de la carpeta que contiene los archivos PDF
 carpeta_pdf = '2827_C'
-
+cont = 0
 # Función para extraer texto de un archivo PDF usando Tesseract OCR
 def extract_text_from_pdf(pdf_path):
     # Abre el archivo PDF
@@ -66,11 +66,15 @@ for filename in os.listdir(carpeta_pdf):
                 nuevo_path = os.path.join(carpeta_pdf, nombre_rename)
                 os.rename(pdf_path, nuevo_path)
                 print(f"El archivo '{filename}' ha sido renombrado a '{nombre_rename}'")
+                
+                cont = cont +1
+                
+                print ('Total',cont)
             else:
                 print(f"El archivo '{filename}' no fue encontrado")
 
-            with open('numero_encontrado.txt', 'w') as archivo:
-                archivo.write(numero)
+            with open('numero_encontrado.txt', 'a') as archivo:
+                archivo.write(numero+';\n')
             print(f"El número {numero} fue guardado en 'numero_encontrado.txt'")
         else:
             print("No se encontró ningún número en el texto")
