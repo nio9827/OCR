@@ -5,7 +5,7 @@ import re
 import os
 
 # Ruta del archivo PDF
-pdf_path = 'C:/Users/rreimer/Pictures/pruebas/4t8601ni.pdf'
+pdf_path = 'pdf_prueba/4t80lm3e.pdf'
 
 # Función para extraer texto de un archivo PDF usando Tesseract OCR
 def extract_text_from_pdf(pdf_path):
@@ -34,6 +34,7 @@ def extract_text_from_pdf(pdf_path):
             
             # Agrega el texto extraído al texto acumulado
             extracted_text += text + '\n'
+            print (extracted_text)
     
     return extracted_text
 
