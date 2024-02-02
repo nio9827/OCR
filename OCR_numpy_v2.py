@@ -7,11 +7,15 @@ from pytesseract import Output
 import fitz  # PyMuPDF
 import shutil
 
+
 # Ruta del directorio que contiene los archivos PDF
-pdf_directory = "m_p"
+pdf_directory = "C:/Users/aalveo/Desktop/CEPADEM/DATA/01/11/2827_C"
 cont = 0
 factor_zoom = 2
-nombre_CSV = 'nombre_lote_01'
+nombre_CSV = 'C:/Users/aalveo/Pictures/probando/OCR/banco_csv/11/2827_C'
+seccion_img = 'C:/Users/aalveo/Desktop/CEPADEM/DATA/01/11/2827_C/2827_img/'
+
+nueva_ruta_directorio = 'C:/Users/aalveo/Desktop/CEPADEM/DATA/01/11/2827_C/archivos_re/'
 
 # Obtener la lista de archivos PDF en el directorio
 pdf_files = [f for f in os.listdir(pdf_directory) if f.lower().endswith(".pdf")]
@@ -64,7 +68,6 @@ for pdf_file in pdf_files:
         # Convertir la sección específica a escala de grises
         seccion_grises = Image.fromarray(seccion_especifica).convert('L')
         
-        
         #Realiza un zoom en la imagen
         nuevo_ancho = seccion_grises.width * factor_zoom
         nueva_altura = seccion_grises.height * factor_zoom
@@ -72,11 +75,9 @@ for pdf_file in pdf_files:
         
         #Guarda la imagen
         #imagen_zoom.save('imagen_zoom_negativa.jpg')
-
         
         #seccion_grises.save("C:/Users/aalveo/Pictures/probando/OCR/seccion_especifica_grises.jpg")
         #seccion_grises_v2.save("C:/Users/aalveo/Pictures/probando/OCR/seccion_especifica_grises_2.jpg")
-
         # Utilizar pytesseract para realizar OCR en la sección específica
         texto_detectado = pytesseract.image_to_string(imagen_zoom, config='--psm 6', output_type=Output.STRING)
         
@@ -89,45 +90,47 @@ for pdf_file in pdf_files:
             text = digitos_extraidos.group(0) 
             nombre_rename = text + ".pdf"
             
-            imagen_zoom.save('cepadem_img/'+text+'.jpg')
-            '''
-            if os.path.exists(pdf_path):
-                nuevo_path = os.path.join(pdf_directory,nombre_rename)
-                os.rename(pdf_path, nuevo_path)
-                print(f"El archivo '{pdf_file}' ha sido renombrado a '{nombre_rename}'")
-            else:
-                print(f"No se pudo renombrar el archivo {pdf_file}")
-            '''                
-                
+            # guarda la seccion de imagen con el texto extraido
+            imagen_zoom.save(seccion_img+text+'.jpg')
+            
+            # Renombra el archivo PDF original
+            # Definir la nueva ruta para el archivo renombrado
+            nueva_ruta_pdf = os.path.join(nueva_ruta_directorio, nombre_rename)
+
+            # Renombrar el archivo PDF
+            try:
+                with open(pdf_path, 'rb') as archivo_original:
+                    with open(nueva_ruta_pdf, 'wb') as archivo_renombrado:
+                        shutil.copyfileobj(archivo_original, archivo_renombrado)
+                print(f"El archivo '{pdf_file}' ha sido renombrado como '{nombre_rename}' en la nueva ruta '{nueva_ruta_pdf}'.")
+                # Eliminar el archivo original
+                os.remove(pdf_path)
+            except PermissionError:
+                print(f"")
+            
+            # crea el archvio CSV
             with open(nombre_CSV+".csv", "a") as archivo:
                 archivo.write(text+';'+ pdf_file+'; \n')
-                
-                
-                
             print(f"El número {text} fue guardado en {nombre_CSV} \n")
-            print("Texto detectado en la sección específica:")
-            print(text)
+            print(f"Texto detectado en la sección específica: {text}")
             print('nombre del archivo: '+pdf_file)
-            
-            
+            cont = cont +1
+            print (f"Total: {cont}")
             
         else: 
             print ("//////////////////////////////////////\n")
             print (f'Archivos no detectado {pdf_file}')
             
             try:
-                ruta_origen = 'm_p/'+pdf_file
-                ruta_destino = 'm_p/inc/'+pdf_file
+                ruta_origen = 'C:/Users/aalveo/Desktop/CEPADEM/DATA/01/11/2827_C/'+pdf_file
+                ruta_destino = 'C:/Users/aalveo/Desktop/CEPADEM/DATA/01/11/2827_C/inc/'+pdf_file
                 shutil.move(ruta_origen, ruta_destino)
             except:
                 print (f'Error al detectar N° Cepadem: archivo  {pdf_file}')
             print ("////////////////////////////////////// \n")
-            
-            
         # resultados
-        cont = cont +1
         
         # Imprimir el texto detectado
         #print ('cantidad : ', cont)
     # Cerrar el documento PDF actual
-pdf_document.close()
+    pdf_document.close()
