@@ -5,9 +5,10 @@ from PyPDF2 import PdfReader
 import numpy as np
 import re
 import os
+import shutil
 
 # Ruta del archivo PDF
-carpeta_pdf = "2827_C"
+carpeta_pdf = "pdf_p"
 cont = 0
 
 
@@ -42,7 +43,7 @@ def extract_text_from_pdf_2(pdf_path):
             # Aplica un umbral a la imagen en escala de grises
             binary_image = apply_threshold(gray_image)
 
-            # Utiliza OCR para extraer texto de la imagen binaria con PSM 7
+            # Utiliza OCR para extraer texto de la imagen binaria con PSM 6
             text = pytesseract.image_to_string(binary_image, config="--psm 6")
 
             # Agrega el texto extraído al texto acumulado
@@ -166,8 +167,11 @@ for filename in os.listdir(carpeta_pdf):
 
                     print("Total", cont)
                 else:
+                    
+                    
                     print(f"El archivo '{filename}' no fue encontrado")
-
+                    
+                    
                 with open("Certificados_2827_C.txt", "a") as archivo:
                     archivo.write(numero + ";\n")
                 print(f"El número {numero} fue guardado en 'numero_encontrado.txt'")
